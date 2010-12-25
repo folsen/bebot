@@ -1,0 +1,17 @@
+# bebot
+
+This using a simple tree AI to figure out the best moves in Bejeweled and uses java.awt.Robot for image analysis.
+
+## Usage
+
+FIXME: Write
+
+## Installation
+
+lein deps
+
+## License
+
+Copyright (C) 2010 Fredrik <ique@3h.se>
+
+Distributed under the Eclipse Public License, the same as Clojure.
