@@ -6,24 +6,26 @@
 	   [java.awt.event InputEvent]))
 
 (def r (new Robot))
-;(Thread/sleep 5000)
-(def cali (ref {:x 0 :y 0}))
+(def cali (ref {:x 192 :y 268}))
 (def space 40)
-(def start (System/currentTimeMillis))
-(def board (make-array Integer/TYPE 8 8))
+(def board (make-array java.lang.Object 8 8))
 
 ;(def colors {:white -65794 :red -122558 :blue -15238154 :yellow -66007
 ;	     :purple -123906 :green -10420589 :orange -65915})
 
-(def colors {:white -65794 :red -65490 :blue -16749580 :yellow -11220
-	     :purple -7733121 :green -16711827 :orange -3479})
+(def colors {:white -5000269 :red -65495 :blue -16744198 :yellow -203
+	     :purple -65294 :green -16729559 :orange -47594})
 
-(defn reverse-map
-  "Reverse the keys/values of a map"
-  [m]
-  (into {} (map (fn [[k v]] [v k]) m)))
+(def rcolors {-5000269 :white -65495 :red -16744198 :blue
+	      -203 :yellow -65294 :purple -16729559 :green
+	      -47594 :orange -16743941 :blue -16764150 :green
+	      -47622 :purple -4934475 :white -5606111 :yellow
+	      -16711792 :green -65494 :red -13224394 :white
+	      -202 :yellow -16729302 :green -3947581 :white
+	      -12255222 :red -47080 :orange})
 
-(def rcolors (reverse-map colors))
+(defn list-contains? [value list]
+  (true? (some #(= value %) list)))
 
 (defn calibrate []
   "Calibrate the window"
@@ -46,21 +48,17 @@
       (println "Couldn't calibrate. Perhaps you need to change the color values in the code.")))
   @cali)
 
-(defn printboard [& cnames]
+(defn printboard []
   "Prints the color numbers for the current board.
    Optional argument cnames is true or false.
    If true it prints the names of the colors
    instead of the numbers. (Good for debugging)."
   (doseq [y (range 0 8) x (range 0 8)]
-    (if cnames
-      (print (str (val (find rcolors (aget board y x))) " "))
-      (print (str (aget board y x) " ")))
+    (print (str (aget board y x) " "))
     (if (= x 7) (print "\n"))))
 
-;(. r mouseMove 0 0 )
-;(. timage getRGB 20 20)
-
-(defn testgrid [cx cy]
+; TODO Provide example picture and fix this thing up
+(defn output-colors [cx cy]
   "Put in the approximate center of the first piece for your screen as x and y
    and you will get a board of the color numbers printed that you can later use."
   (let [w (new Rectangle 0 0 950 950)
@@ -77,34 +75,21 @@
   (let [w (new Rectangle 0 0 950 950)
 	img (. r createScreenCapture w)]
     (doseq [y (range 0 8) x (range 0 8)]
-      (aset board y x
-	    (. img getRGB (+ (:x @cali) (* space x))
-	                  (+ (:y @cali) (* space y)))))))
+      (let [color (. img getRGB (+ (:x @cali) (* space x))
+		     (+ (:y @cali) (* space y)))]
+	(aset board y x (if (nil? (rcolors color))
+			  (do
+			    ;(println (str "Unknown: " color))
+			    ;(Thread/sleep 1500)
+			    :unknown)
+			  (rcolors color)))))))
 
-;(defn valid-moves []
-;  "Returns a seq of all valid moves.")
-
-(defn getp [arr x y]
+(defn getp [arr y x]
   "This probably exists in some native clojure way but I don't want to try to find it."
   (try
-    (aget arr x y)
+    (aget arr y x)
     (catch java.lang.ArrayIndexOutOfBoundsException e
       nil)))
-
-(defn look [dir color sx sy]
-  (case dir
-	:up (if (= color (getp board sx (- sy 1)))
-	      (+ 1 (look :up color sx (- sy 1)))
-	      0)
-	:right (if (= color (getp board (+ sx 1) sy))
-		 (+ 1 (look :right color (+ sx 1) sy))
-		 0)
-	:left (if (= color (getp board (- sx 1) sy))
-		(+ 1 (look :left color (- sx 1) sy))
-		0)
-	:down (if (= color (getp board sx (+ sy 1)))
-		(+ 1 (look :down color sx (+ sy 1)))
-		0)))
 
 (defn score [scores]
   "scores should be in format (p1 p2 p3)
@@ -122,36 +107,87 @@
      ; +1 for the moved stone itself
      1)))
 
-(defn calc-move [fx fy tx ty scoringdirs]
-  "Calculates the validity and the score of a move up for a piece x y"
-  (let [to (getp board tx ty)
+(defn som [color unknown]
+  "Checks if the color of the unknown is the same or multi.
+   som stands for same or multi."
+  (or (= color unknown) (= :multi unknown) (= :multi color)))
+  ;(or (= color unknown)))
+
+(defn look [dir color sy sx]
+  "Looks in a given direction, calculating the total number of same pieces in that direction."
+  (case dir
+	:up (if (som color (getp board (- sy 1) sx))
+	      (+ 1 (look :up (getp board (- sy 1) sx) (- sy 1) sx))
+	      0)
+	:right (if (som color (getp board sy (+ sx 1)))
+		 (+ 1 (look :right (getp board sy (+ sx 1)) sy (+ sx 1)))
+		 0)
+	:left (if (som color (getp board sy (- sx 1)))
+		(+ 1 (look :left (getp board sy (- sx 1)) sy (- sx 1)))
+		0)
+	:down (if (som color (getp board (+ sy 1) sx))
+		(+ 1 (look :down (getp board (+ sy 1) sx) (+ sy 1) sx))
+		0)))
+
+(defn calc-move [dir fy fx ty tx scoringdirs]
+  "Calculates the validity and the score of a move for a piece
+   with start coordinates fx fy and end-coordinates tx ty.
+   Scoring directions are to supplied according to scheme for (score)."
+  (let [to (getp board ty tx)
 	scores (if (not (nil? to))
-		 (map #(look % (getp board fx fy) tx ty) scoringdirs)
+		 (map #(look % (getp board fy fx) ty tx) scoringdirs)
 		 '(0 0 0))]
     (if (> (score scores) 2)
-      {:from {:x fx :y fy} :to {:x tx :y ty} :score (score scores)})))
+      {:dir dir :from {:x fx :y fy} :to {:x tx :y ty} :score (score scores)})))
 
-(defn move [dir x y]
+(defn move [dir y x]
   "Returns a 'move hash' if it's a valid move or nil if it's invalid."
   (case dir
-   :up (calc-move x y x (- y 1) '(:up :left :right))
-   :right (calc-move x y (+ x 1) y '(:right :up :down))
-   :left (calc-move x y (- x 1) y '(:left :down :up))
-   :down (calc-move x y x (+ y 1) '(:down :right :left))))
+   :up    (calc-move :up y x (- y 1) x '(:up :left :right))
+   :right (calc-move :right y x y (+ x 1) '(:right :up :down))
+   :left  (calc-move :left y x y (- x 1) '(:left :down :up))
+   :down  (calc-move :down y x (+ y 1) x '(:down :right :left))))
 
-(defn valid-moves [x y]
+(defn valid-moves [y x]
   "Returns all valid moves for a position x y"
-  (filter #(not (nil? %)) (map #(move % x y) '(:up :right :down :left))))
-  
+  (filter #(not (nil? %)) (map #(move % y x) '(:up :right :down :left))))
+
+(defn all-moves []
+  "Returns all valid moves for the board"
+  (let [moves (ref ())]
+    (doseq [y (range 0 8) x (range 0 8)]
+      (dosync (alter moves conj (valid-moves y x))))
+    (flatten @moves)))
+
+(defn make-move [move]
+  "Makes a move given a 'move map'."
+  (if (not (nil? move))
+    (do
+      (. r mouseMove (+ (:x @cali) (* (-> move :from :x) space))
+	             (+ (:y @cali) (* (-> move :from :y) space)))
+      (. r mousePress InputEvent/BUTTON1_MASK)
+      (. r mouseRelease InputEvent/BUTTON1_MASK)
+      (. r mouseMove (+ (:x @cali) (* (-> move :to :x) space) 3)
+                     (+ (:y @cali) (* (-> move :to :y) space) 3))
+      (. r mousePress InputEvent/BUTTON1_MASK)
+      (. r mouseRelease InputEvent/BUTTON1_MASK))))
+
+(defn run []
+  (dotimes [n 5]
+    (println (str (- 5 n) ".."))
+    (Thread/sleep 1000))
+  (let [start (System/currentTimeMillis)]
+    (loop []
+      (if (> (- (System/currentTimeMillis) start) 60000)
+	"Done"
+	(do
+	  (scan)
+	  (make-move (last (sort-by #(:score %) (all-moves))))
+	  (Thread/sleep 1500)
+	  (recur))))))
 
 (defn -main [&args]
   "Main run loop."
-  (loop []
-    (if (> (- (System/currentTimeMillis) start) 85000)
-    "Done"
-    (do
-      ;Something
-      ;Scan
-      ;Build tree
-      ;Sleep
-      (recur)))))
+  (calibrate)
+  (Thread/sleep 5000)
+  (run))
