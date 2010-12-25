@@ -10,19 +10,14 @@
 (def space 40)
 (def board (make-array java.lang.Object 8 8))
 
-;(def colors {:white -65794 :red -122558 :blue -15238154 :yellow -66007
-;	     :purple -123906 :green -10420589 :orange -65915})
-
-(def colors {:white -5000269 :red -65495 :blue -16744198 :yellow -203
-	     :purple -65294 :green -16729559 :orange -47594})
-
-(def rcolors {-5000269 :white -65495 :red -16744198 :blue
+(def colors {-5000269 :white -65495 :red -16744198 :blue
 	      -203 :yellow -65294 :purple -16729559 :green
 	      -47594 :orange -16743941 :blue -16764150 :green
 	      -47622 :purple -4934475 :white -5606111 :yellow
 	      -16711792 :green -65494 :red -13224394 :white
 	      -202 :yellow -16729302 :green -3947581 :white
-	      -12255222 :red -47080 :orange})
+	      -12255222 :red -47080 :orange -65287 :purple
+	      -12910538 :purple})
 
 (defn list-contains? [value list]
   (true? (some #(= value %) list)))
@@ -35,7 +30,7 @@
     (doseq [y (range 0 600) x (range 0 600) :while (false? @found)]
       ; Find all the 4 corners
       (if (every?
-	   #(contains? rcolors %)
+	   #(contains? colors %)
 	   [(. img getRGB x y)
 	    (. img getRGB (+ x (* space 7)) y)
 	    (. img getRGB x (+ y (* space 7)))
@@ -77,12 +72,12 @@
     (doseq [y (range 0 8) x (range 0 8)]
       (let [color (. img getRGB (+ (:x @cali) (* space x))
 		     (+ (:y @cali) (* space y)))]
-	(aset board y x (if (nil? (rcolors color))
+	(aset board y x (if (nil? (colors color))
 			  (do
 			    ;(println (str "Unknown: " color))
 			    ;(Thread/sleep 1500)
-			    :unknown)
-			  (rcolors color)))))))
+			    color)
+			  (colors color)))))))
 
 (defn getp [arr y x]
   "This probably exists in some native clojure way but I don't want to try to find it."
@@ -111,7 +106,6 @@
   "Checks if the color of the unknown is the same or multi.
    som stands for same or multi."
   (or (= color unknown) (= :multi unknown) (= :multi color)))
-  ;(or (= color unknown)))
 
 (defn look [dir color sy sx]
   "Looks in a given direction, calculating the total number of same pieces in that direction."
@@ -183,7 +177,7 @@
 	(do
 	  (scan)
 	  (make-move (last (sort-by #(:score %) (all-moves))))
-	  (Thread/sleep 1500)
+	  (Thread/sleep 100)
 	  (recur))))))
 
 (defn -main [&args]
