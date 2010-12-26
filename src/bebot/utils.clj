@@ -13,7 +13,8 @@
 	      -16711792 :green -65494 :red -13224394 :white
 	      -202 :yellow -16729302 :green -3947581 :white
 	      -12255222 :red -47080 :orange -65287 :purple
-	      -12910538 :purple})
+	     -12910538 :purple -14996940 :blue -2763307 :blue
+	     -11185069 :orange})
 
 (defn getp [arr y x]
   "This probably exists in some native clojure way but I don't want to try to find it."

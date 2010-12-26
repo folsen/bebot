@@ -10,7 +10,7 @@
 	(:gen-class))
 
 (def r (new Robot))
-(def cali (ref {:x 192 :y 212}))
+(def cali (ref {:x 192 :y 236}))
 
 (def gameboard (make-array java.lang.Object 8 8))
 
@@ -88,7 +88,7 @@
       (Thread/sleep 1000)))
   (let [start (System/currentTimeMillis)]
     (loop []
-      (if (> (- (System/currentTimeMillis) start) 65000)
+      (if (> (- (System/currentTimeMillis) start) 68000)
 	"Done"
 	(do
 	  (scan gameboard)
