@@ -31,9 +31,8 @@
 	  (reset! found true)
 	  (dosync (ref-set cali {:x x :y y})))))
     (if found
-      (println "Calibrated successfully.")
-      (println "Couldn't calibrate. Perhaps you need to change the color values in the code.")))
-  @cali)
+      (println (str "Calibrated successfully.\n" @cali))
+      (println "Couldn't calibrate. Perhaps you need to change the color values in the code."))))
 
 (defn scan [board]
   "Scans the board and puts in the colors on the board 
@@ -85,7 +84,7 @@
   Stupid makes it not look ahead a move."
   (if sleep
     (dotimes [n 5]
-      (println (str (- 5 n) ".."))
+      (println (str (- 5 n) "..")) ;The countdown doesn't work with lein repl but works fine with swank
       (Thread/sleep 1000)))
   (let [start (System/currentTimeMillis)]
     (loop []
