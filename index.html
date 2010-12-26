@@ -77,6 +77,11 @@
 		all you have to do is run <pre>(run true false)</pre> to make it start playing the game. The first parameter is if you want a countdown and the second parameter is wether or not
 		it should play "stupidly". If it's false then it thinks ahead, if it's true then it just takes the best move available right now.
 		</p>
+		<p>
+			You can also use the <a href="https://github.com/downloads/ique/bebot/bebot-0.1-standalone.jar">standalone jar</a> to run the game. It then runs the calibration quickly followed by starting to play. The calibration takes some time
+			so you loose some game-time (like 5 seconds), but it's a way to test it out without installing Clojure. Just download <a href="https://github.com/downloads/ique/bebot/bebot-0.1-standalone.jar">the .jar</a> and run:
+			<pre>java -jar bebot-0.1-standalone.jar</pre>
+			</p>
 	<h2>Color</h2>
 	<p>It turns out that different operating systems have different color profiles. I run a Mac so the program should work fine on all other Macs, but probably wont work on windows.
 		I've added a helper function in utils.clj and a sample picture to help calibrate the colors for your operating system. Run <pre>(ouput-colors x y)</pre> when you have
