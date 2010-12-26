@@ -5,6 +5,16 @@
 ; I stashed this parameter in here because it's used like everywhere.
 (def space 40)
 
+; This parameter has to be here too or output-colors can't get to it.
+(def colors {-5000269 :white -65495 :red -16744198 :blue
+	      -203 :yellow -65294 :purple -16729559 :green
+	      -47594 :orange -16743941 :blue -16764150 :green
+	      -47622 :purple -4934475 :white -5606111 :yellow
+	      -16711792 :green -65494 :red -13224394 :white
+	      -202 :yellow -16729302 :green -3947581 :white
+	      -12255222 :red -47080 :orange -65287 :purple
+	      -12910538 :purple})
+
 (defn getp [arr y x]
   "This probably exists in some native clojure way but I don't want to try to find it."
   (try
@@ -31,7 +41,7 @@
    instead of the numbers. (Good for debugging)."
   (doseq [y (range 0 8) x (range 0 8)]
     (if lookup
-      (print (str (try (val (find bebot.core/colors (aget board y x)))
+      (print (str (try (val (find colors (aget board y x)))
 		       (catch Exception e (aget board y x))) " "))
       (print (str (aget board y x) " ")))
       

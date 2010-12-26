@@ -1,26 +1,18 @@
 (ns bebot.core
   (:use bebot.simulate
-	bebot.utils
-	bebot.moving)
+	  bebot.utils
+	  bebot.moving)
   (:import [java.awt Robot Rectangle]
 	   [java.awt.image BufferedImage RenderedImage]
 	   [java.io File]
 	   [javax.imageio ImageIO]
-	   [java.awt.event InputEvent]))
+	   [java.awt.event InputEvent])
+	(:gen-class))
 
 (def r (new Robot))
 (def cali (ref {:x 192 :y 212}))
 
 (def gameboard (make-array java.lang.Object 8 8))
-
-(def colors {-5000269 :white -65495 :red -16744198 :blue
-	      -203 :yellow -65294 :purple -16729559 :green
-	      -47594 :orange -16743941 :blue -16764150 :green
-	      -47622 :purple -4934475 :white -5606111 :yellow
-	      -16711792 :green -65494 :red -13224394 :white
-	      -202 :yellow -16729302 :green -3947581 :white
-	      -12255222 :red -47080 :orange -65287 :purple
-	      -12910538 :purple})
 
 (defn calibrate []
   "Calibrate the window"
@@ -108,7 +100,7 @@
 	     (make-move (best-move (game-tree gameboard))))
 	  (recur))))))
 
-(defn -main [&args]
+(defn -main [& args]
   "Does a calibration and then runs, for those who
    just wants to try out real simple via Java."
   (calibrate)
