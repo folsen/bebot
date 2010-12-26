@@ -54,9 +54,10 @@
     </div>
 
     <p>I saw the Bejeweled bot in <a href="http://www.reddit.com/r/programming/comments/eptes/i_programmed_a_bot_to_play_bejeweled_blitz_scored/">
-	this post on the programming subreddit reddit</a>. The bot didn't have any sort of AI though so I was inspired to make my own.
+	this post on the programming subreddit</a>. The bot didn't have any sort of AI though so I was inspired to make my own.
 	I wrote it in Clojure and I implemented the bot so it can look ahead one step when playing, so it would prefer a 3 point move if it led to a 5 point move over making a 4 point move first.
-	As it turns out there are a few downsides to this.</p>
+	As it turns out there are a few downsides to this, like producing very many power-up gems that glow and change colors so they can't be properly recognized. This creates a bunch of "black holes" that the bot
+	can't do anything with in.</p>
 	
 	<h2>Demonstration</h2>
 	[video]
@@ -65,7 +66,7 @@
 <h2>Install</h2>
 <p>To be able to run the Clojure code from a REPL you need to have Clojure and lein installed.
 	There are instructions how to install Clojure <a href="http://en.wikibooks.org/wiki/Clojure_Programming/Getting_Started#Installation">here</a> and for lein 
-	<a href="https://github.com/technomancy/leiningen#readme">here</a>. When you have lein installed just <pre>cd</pre> into the root directory of the source and run <pre>lein deps</pre>
+	<a href="https://github.com/technomancy/leiningen#readme">here</a>. When you have lein installed just cd into the root directory of the source and run <pre>lein deps</pre>
 	 and you should be good to go. Open a REPL with <pre>lein repl</pre>.</p>
 	<h2>Usage</h2>
 	<p>When you've fired up a REPL you should open up a Bejeweled window and start a game. Try to have the window as close to the left-hand top as possible.
@@ -76,7 +77,7 @@
 	<h2>Color</h2>
 	<p>It turns out that different operating systems have different color profiles. I run a Mac so the program should work fine on all other Macs, but probably wont work on windows.
 		I've added a helper function in utils.clj and a sample picture to help calibrate the colors for your operating system. Run <pre>(ouput-colors x y)</pre> when you have
-		the sample picture on your screen and where <pre>x</pre> and <pre>y</pre> is the approximate center of the first piece on the board (I've found that slightly below center yields the most stable colors).</p>
+		the sample picture on your screen and where x and y is the approximate center of the first piece on the board (I've found that slightly below center yields the most stable colors).</p>
 <h2>License</h2>
 <p>The project is released under the MIT license. Do what you want with it.</p>
 <h2>Authors</h2>
