@@ -2,6 +2,7 @@
   (:import [java.awt Robot Rectangle]
 	   [java.awt.image BufferedImage RenderedImage]))
 
+; I stashed this parameter in here because it's used like everywhere.
 (def space 40)
 
 (defn getp [arr y x]
@@ -20,12 +21,12 @@
 
 (defn som [color unknown]
   "Checks if the color of the unknown is the same or multi.
-   som stands for same or multi."
+   'som' stands for same or multi."
   (or (= color unknown) (= :multi unknown) (= :multi color)))
 
 (defn printboard [board & lookup]
   "Prints the color numbers for the current board.
-   Optional argument cnames is true or false.
+   Optional argument lookup is true or false.
    If true it prints the names of the colors
    instead of the numbers. (Good for debugging)."
   (doseq [y (range 0 8) x (range 0 8)]
@@ -36,10 +37,10 @@
       
     (if (= x 7) (print "\n"))))
 
-; TODO Provide example picture and fix this thing up
 (defn output-colors [cx cy]
   "Put in the approximate center of the first piece for your screen as x and y
-   and you will get a board of the color numbers printed that you can later use."
+   and you will get a board of the color numbers printed for the unrecoginized colors
+   that you can later use. Sample picture is in the source folder."
   (let [w (new Rectangle 0 0 950 950)
 	img (. (new Robot) createScreenCapture w)
 	board (make-array java.lang.Object 8 8)]

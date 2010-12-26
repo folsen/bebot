@@ -30,7 +30,8 @@
 	(remove-pieces board p3 color sy sx))))
 
 (defn simulate-board-move [board move]
-  "Simulates a move on the board. Adding in 'unknown' pieces on top."
+  "Simulates a move on the board. Adding in 'unknown' pieces on top.
+  Not that pretty... I was getting tired when I wrote this."
   (let [newboard (deepcopy board)
 	color (aget newboard (-> move :from :y) (-> move :from :x))]
     (aset newboard (-> move :from :y) (-> move :from :x)

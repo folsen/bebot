@@ -9,7 +9,7 @@
 	   [java.awt.event InputEvent]))
 
 (def r (new Robot))
-(def cali (ref {:x 192 :y 260}))
+(def cali (ref {:x 192 :y 212}))
 
 (def gameboard (make-array java.lang.Object 8 8))
 
@@ -44,18 +44,15 @@
   @cali)
 
 (defn scan [board]
-  "Put in the approximate center of the first piece for your screen as x and y
-   and you will get a board of the color numbers printed that you can later use."
+  "Scans the board and puts in the colors on the board 
+  or color name if it couldn't recognize it."
   (let [w (new Rectangle 0 0 950 950)
 	img (. r createScreenCapture w)]
     (doseq [y (range 0 8) x (range 0 8)]
       (let [color (. img getRGB (+ (:x @cali) (* space x))
 		     (+ (:y @cali) (* space y)))]
 	(aset board y x (if (nil? (colors color))
-			  (do
-			    ;(println (str "Unknown: " color))
-			    ;(Thread/sleep 1500)
-			    color)
+			    color
 			  (colors color)))))))
 
 (defn game-tree [board]
@@ -91,6 +88,9 @@
       (. r mouseRelease InputEvent/BUTTON1_MASK))))
 
 (defn run [sleep stupid]
+  "Run the bot, parameters are sleep and stupid. 
+  Sleep makes it count down from 5 before starting.
+  Stupid makes it not look ahead a move."
   (if sleep
     (dotimes [n 5]
       (println (str (- 5 n) ".."))
@@ -102,13 +102,14 @@
 	(do
 	  (scan gameboard)
 	  (if stupid
-	     (make-move (last (sort-by #(:score %) (all-moves gameboard))))
+	    (do
+	      (make-move (last (sort-by #(:score %) (all-moves gameboard))))
+	      (Thread/sleep 100))
 	     (make-move (best-move (game-tree gameboard))))
-	  ;(Thread/sleep 50)
 	  (recur))))))
 
 (defn -main [&args]
   "Does a calibration and then runs, for those who
    just wants to try out real simple via Java."
   (calibrate)
-  (run false))
+  (run false true))
