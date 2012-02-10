@@ -1,28 +1,31 @@
-# bebot
+== bebot ==
 
 This using a simple tree AI to figure out the best moves in Bejeweled and uses java.awt.Robot for image analysis.
 
-## Installation
+Installation
+------------
 
 lein deps
 
-## Usage
+Usage
+-----
 
 After you've set everything up you should open up a repl with lein repl from the root folder.
 
 Bring up the game window and start a game (the closer the game window is to the upper right corner the better).
-Now type (calibrate) in the repl.
+Now type `(calibrate)` in the repl.
 
 When it's calibrated successfully (if it doesn't calibrate then you probably need to change the color scheme in the code) you only have to run:
 
-(run true false)
+    (run true false)
 
 to start a game. 
 The first parameter says it will count down from 5. The second parameter is wether it should look ahead a move or not.
 
 Check out http://ique.github.com/bebot/ for more information
 
-## License
+License
+-------
 
 The MIT License
 
