@@ -1,4 +1,5 @@
-== bebot ==
+bebot
+=====
 
 This using a simple tree AI to figure out the best moves in Bejeweled and uses java.awt.Robot for image analysis.
 
