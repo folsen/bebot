@@ -23,14 +23,14 @@ When it's calibrated successfully (if it doesn't calibrate then you probably nee
 to start a game. 
 The first parameter says it will count down from 5. The second parameter is wether it should look ahead a move or not.
 
-Check out http://ique.github.com/bebot/ for more information
+Check out http://folsen.github.com/bebot/ for more information
 
 License
 -------
 
 The MIT License
 
-Copyright (C) 2010 Fredrik <ique@3h.se>
+Copyright (C) 2010 Fredrik <fredrik@dekompile.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
